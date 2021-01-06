@@ -1,12 +1,12 @@
 const bcrypt = require('../lib/bcrypt');
 
-const auth = (knex) => async (req, res, next) => {
+const adminAuth = (knex) => async (req, res, next) => {
   try {
     const { pin, account } = req.headers;
     const hashedPin = await knex
       .from('account')
       .select('pin')
-      .where({ account_number: account });
+      .where({ account_number: account, is_admin: true });
     const pinCheck = await bcrypt.checkPassword(pin, hashedPin[0].pin);
     if (!pinCheck) {
         res.status(401).send();
@@ -18,4 +18,4 @@ const auth = (knex) => async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+module.exports = adminAuth;

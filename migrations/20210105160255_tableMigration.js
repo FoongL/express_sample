@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema
     .createTable('account', (table) => {
-      table.increments('id').unique().primary();
+      table.increments('account_number').unique().primary();
       table.string('f_name').notNull();
       table.string('l_name').notNull();
       table.string('id_number');
@@ -15,9 +15,9 @@ exports.up = function (knex) {
     .createTable('transactions', (table) => {
       table.increments('id').unique().primary();
       table.integer('account_id').unsigned();
-      table.string('type');
+      table.enu('type',['DEPOSIT','WITHDRAW','TRANSFER','FIX']);
       table.decimal('amount', 8, 2);
-      table.string('status');
+      table.enu('status', ['SUCCESSFUL', 'FAILED']);
       table.integer('receiver_account_id').unsigned();
       table.integer('target_transaction').unsigned();
       table.string('description');
@@ -26,4 +26,6 @@ exports.up = function (knex) {
     });
 };
 
-exports.down = function (knex) {};
+exports.down = function (knex) {
+  return knex.schema.dropTable('account').dropTable('transactions');
+};

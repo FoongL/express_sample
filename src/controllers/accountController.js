@@ -20,12 +20,12 @@ class AccountController {
     // Creating account onto DB
     const accountDetails = await this.knex
       .insert({
-        f_name,
-        l_name,
+        f_name:f_name.trim().toLowerCase(),
+        l_name:l_name.trim().toLowerCase(),
         pin: hash,
       })
       .into('account')
-      .returning(['id', 'f_name', 'l_name', 'balance']);
+      .returning(['account_number', 'f_name', 'l_name', 'balance']);
 
     // formatting output data
     const output = { ...accountDetails[0], pin };

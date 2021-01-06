@@ -6,15 +6,16 @@ module.exports = () => (err, req, res, next) => {
     const body = {
         status,
         stack: err.stack,
+        message: err.message
     }
 
-    if (status === 401) {
-        // Default Auth Error
-        body.code = 'PERMISSION_DENIED'
-        body.message = 'You are not authorized for this resource.'
-    } else {
-        body.message = err.message
-    }
+    // if (status === 401) {
+    //     // Default Auth Error
+    //     body.code = 'PERMISSION_DENIED'
+    //     body.message = 'You are not authorized for this resource.'
+    // } else {
+    //     body.message = err.message
+    // }
     res.json({
         error: body,
     })
