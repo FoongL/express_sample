@@ -9,8 +9,6 @@ module.exports = (controller, auth) => {
   router.post('/deposit', wrap(controller.deposit.bind(controller)));
   router.post('/withdraw', wrap(controller.withdraw.bind(controller)));
   router.post('/transfer', wrap(controller.transfer.bind(controller)));
-  // router.post('/fix', wrap(controller.fix.bind(controller)));
-//   router.post('/test', wrap(controller.test.bind(controller)));
 
   return router;
 };

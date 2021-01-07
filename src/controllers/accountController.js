@@ -1,6 +1,11 @@
 const gpc = require('generate-pincode');
 const error = require('../lib/error');
 const bcrypt = require('../lib/bcrypt');
+const { cleanObj } = require('../services/helper');
+const {
+  dateCheck,
+  queryBuilder,
+} = require('../services/accountHistoryService');
 
 class AccountController {
   constructor(knex) {
@@ -20,8 +25,8 @@ class AccountController {
     // Creating account onto DB
     const accountDetails = await this.knex
       .insert({
-        f_name:f_name.trim().toLowerCase(),
-        l_name:l_name.trim().toLowerCase(),
+        f_name: f_name.trim().toLowerCase(),
+        l_name: l_name.trim().toLowerCase(),
         pin: hash,
       })
       .into('account')
@@ -32,10 +37,39 @@ class AccountController {
     return res.status(200).json({ accountDetails: output });
   }
 
-  async test (req,res){
-      const{pw, hash} = req.body
-      const checker = await bcrypt.checkPassword(pw, hash)
-      return res.status(200).json({ checker });
+  async history(req, res) {
+    const { account } = req.body;
+    const {
+      start = new Date('1/1/1900'), // Earlier than any date in system
+      end = new Date(), // no transactions can be recorded after today (yet)
+      type,
+      status,
+    } = req.query;
+    // Data Param Checker
+    dateCheck(start, end, error);
+    const query = queryBuilder(account, type, status, error);
+    const history = await this.knex
+      .from('transactions')
+      .select('*')
+      .where(query)
+      .orWhere({ receiver_account_id: account })
+      .whereBetween('created_at', [new Date(start), new Date(end)])
+      .orderBy('created_at', 'desc');
+    return res
+      .status(200)
+      .json({ transactionHistory: history, totalTransaction: history.length });
+  }
+
+  async balance(req, res) {
+    const { account } = req.body;
+    // Data Param Checker
+    let balance = await this.knex
+      .from('account')
+      .select('balance')
+      .where({ account_number: account });
+      // Formatting output 
+    balance = balance[0].balance
+    return res.status(200).json({ account, balance });
   }
 }
 

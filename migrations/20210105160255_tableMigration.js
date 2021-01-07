@@ -4,8 +4,6 @@ exports.up = function (knex) {
       table.increments('account_number').unique().primary();
       table.string('f_name').notNull();
       table.string('l_name').notNull();
-      table.string('id_number');
-      table.date('dob');
       table.decimal('balance', 8, 2).defaultTo(0);
       table.string('pin');
       table.boolean('is_admin').defaultTo(false);
@@ -17,7 +15,7 @@ exports.up = function (knex) {
       table.integer('account_id').unsigned();
       table.enu('type',['DEPOSIT','WITHDRAW','TRANSFER','FIX']);
       table.decimal('amount', 8, 2);
-      table.enu('status', ['SUCCESSFUL', 'FAILED']);
+      table.enu('status', ['SUCCESSFUL', 'FAILED', 'FIXED']);
       table.integer('receiver_account_id').unsigned();
       table.integer('target_transaction').unsigned();
       table.string('description');

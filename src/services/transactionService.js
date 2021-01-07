@@ -50,8 +50,8 @@ const withdraw = (account, amount, status, description) => {
 };
 
 const accountCheck = async (knex, account, transferTo, error) => {
-  if (account == transferTo) {
-    throw error.GeneralError('Cannot transfer money to your own account');
+  if (account == transferTo || !transferTo) {
+    throw error.GeneralError('Unable to locate account number in system');
   }
   const receiverAccount = await knex('account')
     .select('account_number')
@@ -63,27 +63,59 @@ const accountCheck = async (knex, account, transferTo, error) => {
 };
 
 const transfer = (account, amount, status, transferTo, description) => {
-    return (output = {
-      account_id: account,
-      type: 'TRANSFER',
-      amount,
-      status,
-      description,
-      receiver_account_id: transferTo
-    });
-  };
+  return (output = {
+    account_id: account,
+    type: 'TRANSFER',
+    amount,
+    status,
+    description,
+    receiver_account_id: transferTo,
+  });
+};
 
-  const transferOutput = () => {
-    return (output = [
-      'id as transaction_id',
-      'type',
-      'account_id as sender',
-      'amount',
-      'receiver_account_id as receiver',
-      'status',
-      'description',
-    ]);
-  };
+const transferOutput = () => {
+  return (output = [
+    'id as transaction_id',
+    'type',
+    'account_id as sender',
+    'amount',
+    'receiver_account_id as receiver',
+    'status',
+    'description',
+  ]);
+};
+
+const transactionCheck = async (knex, transactionId, account, error) => {
+  if (!transactionId || !account) {
+    throw error.MissingParamError('Transaction ID or account Number');
+  }
+  let transaction = await knex
+    .from('transactions')
+    .select('*')
+    .where({ id: transactionId, account_id: account });
+  if (transaction.length === 0) {
+    throw error.GeneralError('Unable to locate transaction in system');
+  }
+  transaction = transaction[0]
+  if(!['DEPOSIT','WITHDRAW'].includes(transaction.type)){
+    throw error.GeneralError('Only able to fix deposits or withdraw transactions');
+  }
+  if(['FAILED','FIXED'].includes(transaction.status)){
+    throw error.GeneralError('Only able to fix successful transactions');
+  }
+  return transaction;
+};
+
+const fix = (account, amount, status, description, transactionId) => {
+  return (output = {
+    account_id: account,
+    type: 'FIX',
+    amount,
+    status,
+    description,
+    target_transaction:transactionId
+  });
+};
 
 module.exports = {
   deposit,
@@ -94,4 +126,6 @@ module.exports = {
   accountCheck,
   transfer,
   transferOutput,
+  transactionCheck,
+  fix,
 };

@@ -11,7 +11,6 @@ const adminAuth = (knex) => async (req, res, next) => {
     if (!pinCheck) {
         res.status(401).send();
     }
-    req.body.account = account
     next();
   } catch (err) {
     res.status(401).send();

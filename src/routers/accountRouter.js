@@ -7,8 +7,9 @@ module.exports = (controller, auth) => {
   
 
   router.post('/create', wrap(controller.create.bind(controller)));
-  // router.use(auth)
-  // router.post('/test', wrap(controller.test.bind(controller)));
+  router.use(auth)
+  router.get('/history', wrap(controller.history.bind(controller)));
+  router.get('/balance', wrap(controller.balance.bind(controller)));
 
   return router;
 };
