@@ -5,7 +5,6 @@ const dateCheck = (start, end, error) => {
     if(end && String(new Date(end)) === 'Invalid Date'){
         throw error.GeneralError('Invalid end date provided');
     }
-    console.log(new Date(start) > new Date(end))
     if (new Date(start) > new Date(end)){
         throw error.GeneralError('End date cannot be before Start Date');
     }

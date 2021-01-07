@@ -1,7 +1,6 @@
 const gpc = require('generate-pincode');
 const error = require('../lib/error');
 const bcrypt = require('../lib/bcrypt');
-const { cleanObj } = require('../services/helper');
 const {
   dateCheck,
   queryBuilder,
@@ -30,11 +29,9 @@ class AccountController {
         pin: hash,
       })
       .into('account')
-      .returning(['account_number', 'f_name', 'l_name', 'balance']);
+      .returning(['account_number as account', 'f_name', 'l_name', 'balance']);
 
-    // formatting output data
-    const output = { ...accountDetails[0], pin };
-    return res.status(200).json({ accountDetails: output });
+    return res.status(200).json({ accountDetails: { ...accountDetails[0], pin } });
   }
 
   async history(req, res) {

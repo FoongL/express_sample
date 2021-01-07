@@ -1,5 +1,7 @@
 const error = require('../lib/error');
 const bcrypt = require('../lib/bcrypt');
+const gpc = require('generate-pincode');
+
 const {
   accountCheck,
   transactionCheck,
@@ -139,6 +141,20 @@ class AdminController {
 
     cleanObj(output);
     return res.status(200).json({ ...output, adjustedAmount: -difference });
+  }
+
+  async resetPin(req, res) {
+    const { account, pin = gpc(4) } = req.body;
+    // Data Param Checker
+    await accountCheck(this.knex, '', account, error);
+    const hash = await bcrypt.hashPassword(pin);
+    const updatedUser = await this.knex('account')
+      .update({ pin: hash })
+      .where({account_number: account})
+      .returning(['account_number as account', 'f_name', 'l_name']);
+    return res
+      .status(200)
+      .json({ accountDetails: { ...updatedUser[0], pin } });
   }
 }
 
