@@ -19,7 +19,7 @@ class TransactionController {
   async deposit(req, res) {
     const { account, amount, description = 'none' } = req.body;
     // Check params
-    await amountCheck;
+    amountCheck(amount, error);
     // Start Transaction
     const output = {};
     try {

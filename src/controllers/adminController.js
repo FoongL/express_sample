@@ -66,7 +66,7 @@ class AdminController {
       .orderBy('created_at', 'desc');
     return res
       .status(200)
-      .json({ transactionHistory: history, totalTransaction: history.length });
+      .json({ transactionHistory: history, totalTransaction: history.length, account });
   }
 
   async fix(req, res) {
@@ -78,7 +78,7 @@ class AdminController {
       account,
       error
     );
-    amountCheck(amount);
+    amountCheck(amount, error);
     const output = {};
     let difference;
     if (transaction.type === 'WITHDRAW') {

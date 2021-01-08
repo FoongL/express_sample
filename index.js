@@ -5,6 +5,6 @@ const PORT = process.env.PORT
 // const logger = require('./src/util/logger');
 
 
-app().listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is up on port ${PORT}`);
 });

@@ -4,7 +4,7 @@
   "description": "Crypto Ops Team BE Challenge",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
@@ -35,5 +35,10 @@
     "knex": "^0.21.15",
     "nodemon": "^2.0.6",
     "pg": "^8.5.1"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "superagent": "^6.1.0",
+    "supertest": "^6.0.1"
   }
 }

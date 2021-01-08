@@ -1,4 +1,5 @@
 const bcrypt = require('../lib/bcrypt');
+const{AuthError}= require('../lib/error')
 
 const auth = (knex) => async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ const auth = (knex) => async (req, res, next) => {
       .where({ account_number: account });
     const pinCheck = await bcrypt.checkPassword(pin, hashedPin[0].pin);
     if (!pinCheck) {
-        res.status(401).send();
+      return next(new AuthError());
     }
     req.body.account = account
     next();

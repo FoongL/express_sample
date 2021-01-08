@@ -1,5 +1,9 @@
 const ErrorObject = require('amk-error')
 
+AuthError = () => {
+  return new ErrorObject('Authorization Failed', 401);
+}
+
 MissingParamError = (params) => {
   return new ErrorObject(`${params} missing!`, 400);
 }

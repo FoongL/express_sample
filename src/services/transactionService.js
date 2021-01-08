@@ -50,8 +50,8 @@ const withdraw = (account, amount, status, description) => {
 };
 
 const accountCheck = async (knex, account, transferTo, error) => {
-  if (account === transferTo || !transferTo) {
-    throw error.GeneralError('Unable to locate account number in system');
+  if (Number(account) === Number(transferTo) || !transferTo) {
+    throw error.GeneralError('Unable to transfer to given account');
   }
   const receiverAccount = await knex('account')
     .select('account_number')
