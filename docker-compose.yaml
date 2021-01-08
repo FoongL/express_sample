@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  #Backend api
+  server:
+    container_name: Crypto Challenge
+    build: ./
+    command: sh -c 'npm run db'
+    working_dir: /user/src/server
+    ports:
+      - "3000:3000"
+    depends_on:
+      -postgres  
+    volumes:
+      - ./:/user/src/server
+    environment:
+      POSTGRES_URI: postgres://postgres:postgres@192.168.99.100:5432/crypto
+    links:
+      - postgres
+
+  # PostgreSQL database
+  postgres:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: crypto
+      POSTGRES_HOST: postgres
+    image: postgres
+    ports:
+      - "5432:5432"

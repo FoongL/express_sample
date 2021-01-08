@@ -5,17 +5,18 @@ module.exports = {
   development: {
     client: 'postgresql',
     connection: {
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD
+      host: 'localhost' || 'postgres',
+      database: process.env.DB_NAME || 'crypto',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
+      tableName: 'knex_migrations',
+    },
   },
 
   production: {
@@ -23,14 +24,14 @@ module.exports = {
     connection: {
       database: process.env.DB_NAMEPROD,
       user: process.env.DB_USERPROD,
-      password: process.env.DB_PASSWORDPROD
+      password: process.env.DB_PASSWORDPROD,
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
-  }
+      tableName: 'knex_migrations',
+    },
+  },
 };

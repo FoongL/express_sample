@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --verbose",
+    "db": "knex migrate:rollback && knex migrate:latest && knex seed:run",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
