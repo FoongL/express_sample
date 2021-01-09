@@ -6,12 +6,18 @@ services:
     build: ./
     ports:
       - 3000:3000
-    env_file:
-      - ./.env
+    # env_file:
+    #   - ./.env
+    environment:
+      - PG_HOST=db
+      - PG_DB_NAME=crypto
+      - PG_PASSWORD=postgres
+      - PG_USER=postgres
+      - PG_POST=5432
     depends_on:
       - db  
 
-   db:
+  db:
     build:
       context: ./db
       dockerfile: Dockerfile
