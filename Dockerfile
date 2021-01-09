@@ -1,6 +1,7 @@
-FROM node:9-slim
+FROM node:14.15.4-alpine
 WORKDIR /app
-COPY . .
+COPY package*.json ./
 RUN npm install
+COPY . .
 EXPOSE 3000
-CMD ['npm', 'start']
+CMD ["npm", "start"]

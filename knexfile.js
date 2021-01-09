@@ -5,10 +5,11 @@ module.exports = {
   development: {
     client: 'postgresql',
     connection: {
-      host: 'localhost' || 'postgres',
-      database: process.env.DB_NAME || 'crypto',
-      user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
+      // connection: `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}`
+      host: process.env.PG_HOST,
+      database: process.env.PG_DB_NAME,
+      user: process.env.PG_USER,
+      password: process.env.PG_PASSWORD,
     },
     pool: {
       min: 2,
@@ -22,9 +23,10 @@ module.exports = {
   production: {
     client: 'postgresql',
     connection: {
-      database: process.env.DB_NAMEPROD,
-      user: process.env.DB_USERPROD,
-      password: process.env.DB_PASSWORDPROD,
+      host: process.env.PG_HOST,
+      database: process.env.PG_DB_NAME,
+      user: process.env.PG_USER,
+      password: process.env.PG_PASSWORD,
     },
     pool: {
       min: 2,

@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
 
 // setting up database connection
 const knexConfig = require('../knexfile').development;
