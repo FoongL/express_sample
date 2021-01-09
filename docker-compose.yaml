@@ -8,15 +8,3 @@ services:
       - 3000:3000
     env_file:
       - ./.env.development.local  
-
-  # PostgreSQL database
-  # postgres:
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: crypto
-  #     POSTGRES_HOST: postgres
-  #   image: postgres:latest
-  #   restart: always
-  #   ports:
-  #     - 5432:5432

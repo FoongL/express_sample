@@ -1,9 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 
-// setting up database connection
-const knexConfig = require('../knexfile').development;
-const knex = require('knex')(knexConfig);
+// Importing db config files
+const knex = require('./lib/db');
 
 // Importing Utils
 const errorHandler = require('./util/errorHandler');
@@ -26,10 +25,6 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-//---- just so there is something too see when server is hosted
-app.get('/', (req, res) => {
-  res.status(200).send("Welcome to Foong's Crypto Test");
-});
 
 // Initialize Controllers
 const accountController = new AccountController(knex);

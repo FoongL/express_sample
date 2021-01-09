@@ -1,3 +1,4 @@
+// Importing required modules / files
 const gpc = require('generate-pincode');
 const error = require('../lib/error');
 const bcrypt = require('../lib/bcrypt');
@@ -31,7 +32,9 @@ class AccountController {
       .into('account')
       .returning(['account_number as account', 'f_name', 'l_name', 'balance']);
 
-    return res.status(200).json({ accountDetails: { ...accountDetails[0], pin } });
+    return res
+      .status(200)
+      .json({ accountDetails: { ...accountDetails[0], pin } });
   }
 
   async history(req, res) {
@@ -44,7 +47,11 @@ class AccountController {
     } = req.query;
     // Data Param Checker
     dateCheck(start, end, error);
+
+    // Building Query
     const query = queryBuilder(account, type, status, error);
+
+    // Fetch Required Data
     const history = await this.knex
       .from('transactions')
       .select('*')
@@ -59,13 +66,13 @@ class AccountController {
 
   async balance(req, res) {
     const { account } = req.body;
-    // Data Param Checker
+    // Fetching Required Data
     let balance = await this.knex
       .from('account')
       .select('balance')
       .where({ account_number: account });
-      // Formatting output 
-    balance = balance[0].balance
+    // Formatting output
+    balance = balance[0].balance;
     return res.status(200).json({ account, balance });
   }
 }

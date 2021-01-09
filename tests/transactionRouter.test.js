@@ -193,16 +193,16 @@ describe('Testing Transaction Router', () => {
     });
 
     test('Trying to transfer more money to no one', async () => {
-        const response = await request(app)
-          .post('/transaction/transfer')
-          .set('pin', pin)
-          .set('account', account_number)
-          .send({
-            amount: 100,
-            description: 'Test Transfer',
-          });
-        expect(response.statusCode).toBe(400);
-      });
+      const response = await request(app)
+        .post('/transaction/transfer')
+        .set('pin', pin)
+        .set('account', account_number)
+        .send({
+          amount: 100,
+          description: 'Test Transfer',
+        });
+      expect(response.statusCode).toBe(400);
+    });
 
     test('Successful transfer', async () => {
       const response = await request(app)
@@ -216,8 +216,14 @@ describe('Testing Transaction Router', () => {
         });
       transactions.push(response.body.transaction.transaction_id);
       expect(response.statusCode).toBe(200);
-      expect(response.body.transaction).toHaveProperty('sender', account_number);
-      expect(response.body.transaction).toHaveProperty('receiver', account_number_two);
+      expect(response.body.transaction).toHaveProperty(
+        'sender',
+        account_number
+      );
+      expect(response.body.transaction).toHaveProperty(
+        'receiver',
+        account_number_two
+      );
       expect(response.body.transaction).toHaveProperty('status', 'SUCCESSFUL');
     });
   });

@@ -1,3 +1,4 @@
+// Importing required files and modules
 const error = require('../lib/error');
 const {
   deposit,
@@ -7,7 +8,7 @@ const {
   withdraw,
   accountCheck,
   transfer,
-  transferOutput
+  transferOutput,
 } = require('../services/transactionService');
 const { cleanObj } = require('../services/helper');
 
@@ -18,8 +19,10 @@ class TransactionController {
 
   async deposit(req, res) {
     const { account, amount, description = 'none' } = req.body;
+
     // Check params
     amountCheck(amount, error);
+
     // Start Transaction
     const output = {};
     try {
@@ -28,8 +31,9 @@ class TransactionController {
         const transObject = deposit(account, amount, 'SUCCESSFUL', description);
         output.transaction = await this.knex('transactions')
           .insert(transObject)
-          .returning(withDepOutput())
+          .returning(withDepOutput)
           .transacting(trx);
+
         // Update Account Balance
         output.newBalance = await this.knex('account')
           .increment({ balance: amount })
@@ -49,6 +53,7 @@ class TransactionController {
 
   async withdraw(req, res) {
     const { account, amount, description = 'none' } = req.body;
+
     // Check params
     amountCheck(amount, error);
     await fundCheck(this.knex, amount, account, error);
@@ -66,8 +71,9 @@ class TransactionController {
         );
         output.transaction = await this.knex('transactions')
           .insert(transObject)
-          .returning(withDepOutput())
+          .returning(withDepOutput)
           .transacting(trx);
+
         // Update Account Balance
         output.newBalance = await this.knex('account')
           .decrement({ balance: amount })
@@ -87,6 +93,7 @@ class TransactionController {
 
   async transfer(req, res) {
     const { account, amount, description = 'none', transferTo } = req.body;
+
     // Check params
     amountCheck(amount, error);
     await fundCheck(this.knex, amount, account, error);
@@ -106,14 +113,16 @@ class TransactionController {
         );
         output.transaction = await this.knex('transactions')
           .insert(transObject)
-          .returning(transferOutput())
+          .returning(transferOutput)
           .transacting(trx);
+
         // Update Account Balance of sender
         await this.knex('account')
           .decrement({ balance: amount })
           .update({ updated_at: new Date() })
           .where({ account_number: account })
           .transacting(trx);
+
         // Update Account of receiver
         await this.knex('account')
           .increment({ balance: amount })

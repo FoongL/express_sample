@@ -1,3 +1,4 @@
+// build out deposit query for knex
 const deposit = (account, amount, status, description) => {
   return (output = {
     account_id: account,
@@ -8,16 +9,16 @@ const deposit = (account, amount, status, description) => {
   });
 };
 
-const withDepOutput = () => {
-  return (output = [
-    'id as transaction_id',
-    'type',
-    'account_id as account',
-    'status',
-    'description',
-  ]);
-};
+// return outputs from knex wanted for deposit and withdraw transactions
+const withDepOutput = [
+  'id as transaction_id',
+  'type',
+  'account_id as account',
+  'status',
+  'description',
+];
 
+// Used to ensure amount passed in is in a valid format for processing
 const amountCheck = (amount, error) => {
   if (!amount || isNaN(amount)) {
     throw error.MissingParamError('Valid  amount');
@@ -28,6 +29,7 @@ const amountCheck = (amount, error) => {
   return true;
 };
 
+// Used to ensure sufficient funds are in given account to conduct needed transactions
 const fundCheck = async (knex, amount, account, error) => {
   let balance = await knex('account')
     .select('balance')
@@ -39,6 +41,7 @@ const fundCheck = async (knex, amount, account, error) => {
   return true;
 };
 
+// Create Withdraw query for knex
 const withdraw = (account, amount, status, description) => {
   return (output = {
     account_id: account,
@@ -49,6 +52,7 @@ const withdraw = (account, amount, status, description) => {
   });
 };
 
+//CHecking if account exists (and does not belong to sender) for transactions processes
 const accountCheck = async (knex, account, transferTo, error) => {
   if (Number(account) === Number(transferTo) || !transferTo) {
     throw error.GeneralError('Unable to transfer to given account');
@@ -62,6 +66,7 @@ const accountCheck = async (knex, account, transferTo, error) => {
   return true;
 };
 
+// Builds out transfer queries for knex queries
 const transfer = (account, amount, status, transferTo, description) => {
   return (output = {
     account_id: account,
@@ -73,18 +78,18 @@ const transfer = (account, amount, status, transferTo, description) => {
   });
 };
 
-const transferOutput = () => {
-  return (output = [
-    'id as transaction_id',
-    'type',
-    'account_id as sender',
-    'amount',
-    'receiver_account_id as receiver',
-    'status',
-    'description',
-  ]);
-};
+// transfer transaction output
+const transferOutput = [
+  'id as transaction_id',
+  'type',
+  'account_id as sender',
+  'amount',
+  'receiver_account_id as receiver',
+  'status',
+  'description',
+];
 
+// Transaction checking to ensure things work before Fixing a transaction (admin process only)
 const transactionCheck = async (knex, transactionId, account, error) => {
   if (!transactionId || !account) {
     throw error.MissingParamError('Transaction ID or account Number');
@@ -96,16 +101,19 @@ const transactionCheck = async (knex, transactionId, account, error) => {
   if (transaction.length === 0) {
     throw error.GeneralError('Unable to locate transaction in system');
   }
-  transaction = transaction[0]
-  if(!['DEPOSIT','WITHDRAW'].includes(transaction.type)){
-    throw error.GeneralError('Only able to fix deposits or withdraw transactions');
+  transaction = transaction[0];
+  if (!['DEPOSIT', 'WITHDRAW'].includes(transaction.type)) {
+    throw error.GeneralError(
+      'Only able to fix deposits or withdraw transactions'
+    );
   }
-  if(['FAILED','FIXED'].includes(transaction.status)){
+  if (['FAILED', 'FIXED'].includes(transaction.status)) {
     throw error.GeneralError('Only able to fix successful transactions');
   }
   return transaction;
 };
 
+// building out fix transaction query for knex
 const fix = (account, amount, status, description, transactionId) => {
   return (output = {
     account_id: account,
@@ -113,7 +121,7 @@ const fix = (account, amount, status, description, transactionId) => {
     amount,
     status,
     description,
-    target_transaction:transactionId
+    target_transaction: transactionId,
   });
 };
 

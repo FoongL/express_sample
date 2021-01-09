@@ -181,55 +181,61 @@ describe('Testing Admin Router', () => {
           transactionId: withdraw_transaction,
           account: account_number,
           amount: 100,
-        })
+        });
       transactions.push(response.body.transaction.id);
       expect(response.statusCode).toBe(200);
-      expect(response.body.transaction).toHaveProperty('type','FIX')
-      expect(response.body.transaction).toHaveProperty('status','SUCCESSFUL')
-      expect(response.body.transaction).toHaveProperty('target_transaction', withdraw_transaction)
+      expect(response.body.transaction).toHaveProperty('type', 'FIX');
+      expect(response.body.transaction).toHaveProperty('status', 'SUCCESSFUL');
+      expect(response.body.transaction).toHaveProperty(
+        'target_transaction',
+        withdraw_transaction
+      );
     });
 
     test('Trying to fix a fixed withdraw transaction', async () => {
-        const response = await request(app)
-          .put('/admin/fix')
-          .set('pin', pin)
-          .set('account', admin_account)
-          .send({
-            transactionId: withdraw_transaction,
-            account: account_number,
-            amount: 100,
-          })
-        expect(response.statusCode).toBe(400);
-      });
+      const response = await request(app)
+        .put('/admin/fix')
+        .set('pin', pin)
+        .set('account', admin_account)
+        .send({
+          transactionId: withdraw_transaction,
+          account: account_number,
+          amount: 100,
+        });
+      expect(response.statusCode).toBe(400);
+    });
 
-      test('Fix a deposit Transaction', async () => {
-        const response = await request(app)
-          .put('/admin/fix')
-          .set('pin', pin)
-          .set('account', admin_account)
-          .send({
-            transactionId: deposit_transaction,
-            account: account_number,
-            amount: 999,
-          })
-        transactions.push(response.body.transaction.id);
-        expect(response.statusCode).toBe(200);
-        expect(response.body.transaction).toHaveProperty('type','FIX')
-        expect(response.body.transaction).toHaveProperty('status','SUCCESSFUL')
-        expect(response.body.transaction).toHaveProperty('target_transaction', deposit_transaction)
-      });
+    test('Fix a deposit Transaction', async () => {
+      const response = await request(app)
+        .put('/admin/fix')
+        .set('pin', pin)
+        .set('account', admin_account)
+        .send({
+          transactionId: deposit_transaction,
+          account: account_number,
+          amount: 999,
+        });
+      transactions.push(response.body.transaction.id);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.transaction).toHaveProperty('type', 'FIX');
+      expect(response.body.transaction).toHaveProperty('status', 'SUCCESSFUL');
+      expect(response.body.transaction).toHaveProperty(
+        'target_transaction',
+        deposit_transaction
+      );
+    });
 
-      test('Trying to fix a fixed deposit transaction', async () => {
-        const response = await request(app)
-          .put('/admin/fix')
-          .set('pin', pin)
-          .set('account', admin_account)
-          .send({
-            transactionId: deposit_transaction,
-            account: account_number,
-            amount: 999,
-          })
-        expect(response.statusCode).toBe(400);
-      });
+    test('Trying to fix a fixed deposit transaction', async () => {
+      const response = await request(app)
+        .put('/admin/fix')
+        .set('pin', pin)
+        .set('account', admin_account)
+        .send({
+          transactionId: deposit_transaction,
+          account: account_number,
+          amount: 999,
+        });
+      expect(response.statusCode).toBe(400);
+    });
   });
 });

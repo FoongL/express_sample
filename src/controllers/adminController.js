@@ -1,7 +1,7 @@
+// Importing required files and modules
 const error = require('../lib/error');
 const bcrypt = require('../lib/bcrypt');
 const gpc = require('generate-pincode');
-
 const {
   accountCheck,
   transactionCheck,
@@ -20,12 +20,14 @@ class AdminController {
     this.knex = knex;
   }
 
-  async create(req, res) {
+  async createAdmin(req, res) {
     const { fName: f_name, lName: l_name, pin } = req.body;
+
     // Data Param Checker
     if (!f_name || !l_name || !pin) {
       throw error.MissingParamError('First name, Last name or pin');
     }
+
     // Hashing pin for db storage
     const hash = await bcrypt.hashPassword(pin);
 
@@ -53,10 +55,15 @@ class AdminController {
       status,
       account,
     } = req.query;
+
     // Data Param Checker
     dateCheck(start, end, error);
     await accountCheck(this.knex, '', account, error);
+
+    // Query building
     const query = queryBuilder(account, type, status, error);
+
+    //Fetching required data
     const history = await this.knex
       .from('transactions')
       .select('*')
@@ -64,13 +71,16 @@ class AdminController {
       .orWhere({ receiver_account_id: account })
       .whereBetween('created_at', [new Date(start), new Date(end)])
       .orderBy('created_at', 'desc');
-    return res
-      .status(200)
-      .json({ transactionHistory: history, totalTransaction: history.length, account });
+    return res.status(200).json({
+      transactionHistory: history,
+      totalTransaction: history.length,
+      account,
+    });
   }
 
   async fix(req, res) {
     const { transactionId, account, amount } = req.body;
+
     // Data Param Checker
     const transaction = await transactionCheck(
       this.knex,
@@ -79,8 +89,11 @@ class AdminController {
       error
     );
     amountCheck(amount, error);
+
     const output = {};
     let difference;
+
+    //CHecking Transaction TYpe
     if (transaction.type === 'WITHDRAW') {
       // Fixing WITHDRAW transaction
       // Checking if Transaction fix will pull account balance to the red
@@ -110,6 +123,7 @@ class AdminController {
           .insert(fixObject)
           .returning('*')
           .transacting(trx);
+
         // Update Account Balance
         output.newBalance = await this.knex('account')
           .decrement({ balance: difference })
@@ -117,6 +131,7 @@ class AdminController {
           .where({ account_number: account })
           .returning('balance')
           .transacting(trx);
+
         // updating old transaction status
         const test = await this.knex
           .from('transactions')
@@ -147,14 +162,16 @@ class AdminController {
     const { account, pin = gpc(4) } = req.body;
     // Data Param Checker
     await accountCheck(this.knex, '', account, error);
+
+    // Hashing pin for db storage
     const hash = await bcrypt.hashPassword(pin);
+
+    // Updating user record in DB
     const updatedUser = await this.knex('account')
       .update({ pin: hash })
-      .where({account_number: account})
+      .where({ account_number: account })
       .returning(['account_number as account', 'f_name', 'l_name']);
-    return res
-      .status(200)
-      .json({ accountDetails: { ...updatedUser[0], pin } });
+    return res.status(200).json({ accountDetails: { ...updatedUser[0], pin } });
   }
 }
 

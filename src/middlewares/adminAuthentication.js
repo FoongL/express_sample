@@ -7,9 +7,11 @@ const adminAuth = (knex) => async (req, res, next) => {
       .from('account')
       .select('pin')
       .where({ account_number: account, is_admin: true });
+
+    //Check pin
     const pinCheck = await bcrypt.checkPassword(pin, hashedPin[0].pin);
     if (!pinCheck) {
-        res.status(401).send();
+      res.status(401).send();
     }
     next();
   } catch (err) {
