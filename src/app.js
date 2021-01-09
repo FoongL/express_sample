@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 // Importing db config files
-const knex = require('./lib/db');
+const knex = require('../db/db');
 
 // Importing Utils
 const errorHandler = require('./util/errorHandler');
