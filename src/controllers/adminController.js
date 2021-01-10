@@ -40,7 +40,7 @@ class AdminController {
         is_admin: true,
       })
       .into('account')
-      .returning(['account_number', 'f_name', 'l_name', 'is_admin']);
+      .returning(['account_number', 'f_name as fName', 'l_name as lName', 'is_admin']);
 
     // formatting output data
     const output = { ...accountDetails[0], pin };
@@ -170,7 +170,7 @@ class AdminController {
     const updatedUser = await this.knex('account')
       .update({ pin: hash })
       .where({ account_number: account })
-      .returning(['account_number as account', 'f_name', 'l_name']);
+      .returning(['account_number as account', 'f_name as fName', 'l_name as lName']);
     return res.status(200).json({ accountDetails: { ...updatedUser[0], pin } });
   }
 }

@@ -30,7 +30,7 @@ class AccountController {
         pin: hash,
       })
       .into('account')
-      .returning(['account_number as account', 'f_name', 'l_name', 'balance']);
+      .returning(['account_number as account', 'f_name as fName', 'l_name as lName', 'balance']);
 
     return res
       .status(200)
