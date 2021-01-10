@@ -33,8 +33,8 @@ describe('Testing Account Router', () => {
       account_number = response.body.accountDetails.account;
       pin = response.body.accountDetails.pin;
       expect(response.statusCode).toBe(200);
-      expect(response.body.accountDetails).toHaveProperty('f_name', 'test');
-      expect(response.body.accountDetails).toHaveProperty('l_name', 'test');
+      expect(response.body.accountDetails).toHaveProperty('fName', 'test');
+      expect(response.body.accountDetails).toHaveProperty('lName', 'test');
       expect(response.body.accountDetails).toHaveProperty('balance', '0.00');
       expect(response.body.accountDetails).toHaveProperty('pin');
     });
